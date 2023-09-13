@@ -1,4 +1,4 @@
-import { SignIn, UserButton, useUser } from "@clerk/nextjs";
+import { SignIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 
 export default function Home() {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  // const user = useUser();
+  const user = useUser();
 
   const { data } = api.posts.getAll.useQuery();
 
@@ -21,7 +21,9 @@ export default function Home() {
         <div>
           <UserButton afterSignOutUrl="/" />
         </div>
-        <SignIn />;
+        {!user.isSignedIn && <SignIn />}
+        {!!user.isSignedIn && <SignedOut />}
+
         <div>
           {data?.map((post) => <div key={post.id}>{post.content}</div>)}
         </div>
