@@ -22,7 +22,7 @@ export default function Home() {
           <UserButton afterSignOutUrl="/" />
         </div>
         {!user.isSignedIn && <SignIn />}
-        {!!user.isSignedIn && <SignedOut />}
+        {/* {!!user.isSignedIn && <SignedOut />} */}
 
         <div>
           {data?.map((post) => <div key={post.id}>{post.content}</div>)}
