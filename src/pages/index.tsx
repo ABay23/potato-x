@@ -7,9 +7,31 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import Head from "next/head";
-import Link from "next/link";
 
 import { api } from "~/utils/api";
+
+const CreatePostWizard = () => {
+  const { user } = useUser();
+
+  console.log(user);
+
+  if (!user) return null;
+
+  return (
+    <div className=" flex w-full">
+      <img
+        src={user.imageUrl}
+        alt="Profile Image"
+        className="h-14 w-14 rounded-full border-2 border-blue-400"
+      />
+      <input
+        type="text"
+        placeholder="tipe an emoji!"
+        className=" m-2 grow bg-transparent p-2 pl-4 outline-none "
+      />
+    </div>
+  );
+};
 
 export default function Home() {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -29,10 +51,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen justify-center">
+        <UserButton afterSignOutUrl="/" />
         <div className=" h-full w-full border-x-2 border-slate-400 bg-teal-900 md:max-w-2xl">
           <div className=" static flex flex-row justify-between border-b-2 border-slate-400">
             <div className=" right-0 top-0 p-4 ">
-              <UserButton afterSignOutUrl="/" />
+              <CreatePostWizard />
             </div>
             {!user.isSignedIn && (
               <div className=" p-4">
