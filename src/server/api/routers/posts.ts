@@ -5,11 +5,9 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 const filterUserForClient = (user: User) => ({
-  return: {
-    id: user.id,
-    username: user.username,
-    profileImageUrl: user.imageUrl,
-  },
+  id: user.id,
+  username: user.username,
+  profileImageUrl: user.imageUrl,
 });
 
 export const postsRouter = createTRPCRouter({
@@ -24,8 +22,14 @@ export const postsRouter = createTRPCRouter({
         limit: 100,
       })
     ).map(filterUserForClient);
+
     console.log(users);
 
-    return posts;
+    return posts.map((post) => ({
+      post,
+      author: users.find((user) => user.id === post.authorId),
+    }));
+
+    // return posts;
   }),
 });

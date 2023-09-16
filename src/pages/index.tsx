@@ -8,7 +8,7 @@ import {
 } from "@clerk/nextjs";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 
 const CreatePostWizard = () => {
   const { user } = useUser();
@@ -29,6 +29,16 @@ const CreatePostWizard = () => {
         placeholder="tipe an emoji!"
         className=" m-2 grow bg-transparent p-2 pl-4 outline-none "
       />
+    </div>
+  );
+};
+
+type postWithUsers = RouterOutputs["posts"]["getAll"][number];
+const PostViews = (props: postWithUsers) => {
+  const { post, author } = props;
+  return (
+    <div key={post.id} className="  border-b-2 border-slate-400 p-8">
+      {post.content}
     </div>
   );
 };
@@ -70,10 +80,8 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col">
-            {[...data, ...data]?.map((post) => (
-              <div key={post.id} className="  border-b-2 border-slate-400 p-8">
-                {post.content}
-              </div>
+            {[...data, ...data]?.map((fullPost) => (
+              <PostViews {...fullPost} key={fullPost.post.id} />
             ))}
           </div>
         </div>
