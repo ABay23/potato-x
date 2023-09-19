@@ -1,8 +1,6 @@
 import {
-  SignIn,
   SignInButton,
   SignOutButton,
-  SignedOut,
   UserButton,
   useUser,
 } from "@clerk/nextjs";
@@ -10,7 +8,10 @@ import Head from "next/head";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-import { RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
+import Image from "next/image";
+import { LoadingPage, LoadingSpinner } from "./components/loading";
 
 dayjs.extend(relativeTime);
 
@@ -23,10 +24,12 @@ const CreatePostWizard = () => {
 
   return (
     <div className=" flex w-full">
-      <img
+      <Image
         src={user.imageUrl}
         alt="Profile Image"
         className="h-14 w-14 rounded-full border-2 border-blue-400"
+        width={56}
+        height={56}
       />
       <input
         type="text"
@@ -42,10 +45,12 @@ const PostViews = (props: postWithUsers) => {
   const { post, author } = props;
   return (
     <div key={post.id} className=" flex gap-3 border-b-2 border-slate-400 p-4">
-      <img
+      <Image
         src={author.profileImageUrl}
-        alt="profile Image"
+        alt={`${author.username}'s Profile Image`}
         className="h-14 w-14 rounded-full border-2 border-blue-400"
+        width={56}
+        height={56}
       />
       <div className=" flex flex-col ">
         <div className="flex">
@@ -66,7 +71,7 @@ export default function Home() {
 
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingPage />;
 
   if (!data) return <div>Something Went Wrong!</div>;
 
