@@ -7,8 +7,12 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import Head from "next/head";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 import { RouterOutputs, api } from "~/utils/api";
+
+dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
   const { user } = useUser();
@@ -37,8 +41,21 @@ type postWithUsers = RouterOutputs["posts"]["getAll"][number];
 const PostViews = (props: postWithUsers) => {
   const { post, author } = props;
   return (
-    <div key={post.id} className="  border-b-2 border-slate-400 p-8">
-      {post.content}
+    <div key={post.id} className=" flex gap-3 border-b-2 border-slate-400 p-4">
+      <img
+        src={author.profileImageUrl}
+        alt="profile Image"
+        className="h-14 w-14 rounded-full border-2 border-blue-400"
+      />
+      <div className=" flex flex-col ">
+        <div className="flex">
+          <span className=" font-bold text-slate-400">{`@${author.username}`}</span>
+          <span className=" pl-1 font-light text-slate-400">
+            {` . ${dayjs(post.createdAt).fromNow()}`}
+          </span>
+        </div>
+        <span>{post.content}</span>
+      </div>
     </div>
   );
 };
@@ -62,7 +79,7 @@ export default function Home() {
       </Head>
       <main className="flex h-screen justify-center">
         <UserButton afterSignOutUrl="/" />
-        <div className=" h-full w-full border-x-2 border-slate-400 bg-teal-900 md:max-w-2xl">
+        <div className=" h-full w-full border-x-2 border-slate-400 bg-blue-950 md:max-w-2xl">
           <div className=" static flex flex-row justify-between border-b-2 border-slate-400">
             <div className=" right-0 top-0 p-4 ">
               <CreatePostWizard />
