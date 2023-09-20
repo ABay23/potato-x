@@ -65,15 +65,35 @@ const PostViews = (props: postWithUsers) => {
   );
 };
 
-export default function Home() {
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  const user = useUser();
+export const Feed = () => {
+  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
 
-  const { data, isLoading } = api.posts.getAll.useQuery();
-
-  if (isLoading) return <LoadingPage />;
+  if (postsLoading) return <LoadingPage />;
 
   if (!data) return <div>Something Went Wrong!</div>;
+
+  return (
+    <div className="flex flex-col">
+      {[...data, ...data]?.map((fullPost) => (
+        <PostViews {...fullPost} key={fullPost.post.id} />
+      ))}
+    </div>
+  );
+};
+
+export default function Home() {
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
+
+  //* Fetch query faster than the page render.
+  api.posts.getAll.useQuery();
+
+  //* If both user and posts are loaded, then we can render the page faster.
+  if (!userLoaded) return <div />;
+
+  // if (postLoaded) return <LoadingPage />;
+
+  // if (!data) return <div>Something Went Wrong!</div>;
 
   return (
     <>
@@ -89,23 +109,18 @@ export default function Home() {
             <div className=" right-0 top-0 p-4 ">
               <CreatePostWizard />
             </div>
-            {!user.isSignedIn && (
+            {!isSignedIn && (
               <div className=" p-4">
                 <SignInButton />
               </div>
             )}
-            {!!user.isSignedIn && (
+            {!!isSignedIn && (
               <div className=" p-4">
                 <SignOutButton />
               </div>
             )}
           </div>
-
-          <div className="flex flex-col">
-            {[...data, ...data]?.map((fullPost) => (
-              <PostViews {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
