@@ -21,7 +21,14 @@ const CreatePostWizard = () => {
 
   const [input, setInput] = useState("");
 
-  const { mutate } = api.posts.create.useMutation();
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.posts.getAll.invalidate();
+    },
+  });
 
   console.log(user);
 
@@ -42,6 +49,7 @@ const CreatePostWizard = () => {
         className=" m-2 grow bg-transparent p-2 pl-4 outline-none "
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        disabled={isPosting}
       />
       <button
         onClick={() => {
@@ -88,7 +96,7 @@ export const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {[...data, ...data]?.map((fullPost) => (
+      {data?.map((fullPost) => (
         <PostViews {...fullPost} key={fullPost.post.id} />
       ))}
     </div>
