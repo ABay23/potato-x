@@ -12,11 +12,16 @@ import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "./components/loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
   const { user } = useUser();
+
+  const [input, setInput] = useState("");
+
+  const { mutate } = api.posts.create.useMutation();
 
   console.log(user);
 
@@ -35,7 +40,16 @@ const CreatePostWizard = () => {
         type="text"
         placeholder="tipe an emoji!"
         className=" m-2 grow bg-transparent p-2 pl-4 outline-none "
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
       />
+      <button
+        onClick={() => {
+          mutate({ content: input });
+        }}
+      >
+        Post
+      </button>
     </div>
   );
 };
