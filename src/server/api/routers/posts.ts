@@ -70,7 +70,7 @@ export const postsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        content: z.string().emoji().min(1).max(140),
+        content: z.string().emoji("Emojis Only!").min(1).max(140),
       }),
     )
     .mutation(async ({ ctx, input }) => {
